@@ -12,6 +12,7 @@
     "fast-xml-parser": "^3.17.4",
     "googleapis": "^52.1.0",
     "http-errors": "~1.6.3",
+    "mongoose": "^5.9.21",
     "morgan": "~1.9.1",
     "pug": "2.0.0-beta11",
     "rss-parser": "^3.8.0"
