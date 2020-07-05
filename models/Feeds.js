@@ -13,7 +13,8 @@ const FeedSchema = new Schema({
         text: String
     },
     created_at: Date,
-    updated_at: Date
+    updated_at: Date,
+    score: {type: Number, required: true}
 });
 
 module.exports = mongoose.model('Feeds', FeedSchema);
