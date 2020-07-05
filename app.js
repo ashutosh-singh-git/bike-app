@@ -9,7 +9,7 @@ const feedControllers = require('./controllers/feedController');
 
 
 const mongoose = require('mongoose');
-let uri = "mongodb://localhost:27017/bike";
+let uri = "mongodb://heroku_cm2h40nc:f6qdbhs0mq6hv6ij982jr8s5r@ds339968.mlab.com:39968/heroku_cm2h40nc";
 mongoose.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true });
 mongoose.Promise = global.Promise;
 const db = mongoose.connection;
