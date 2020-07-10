@@ -6,10 +6,12 @@ const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
 const feedControllers = require('./controllers/feedController');
+const scoreControllers = require('./controllers/getScore');
 
 
 const mongoose = require('mongoose');
 let uri = "mongodb://heroku_cm2h40nc:f6qdbhs0mq6hv6ij982jr8s5r@ds339968.mlab.com:39968/heroku_cm2h40nc";
+// let uri = 'mongodb://localhost/ukmdatabase'
 mongoose.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true });
 mongoose.Promise = global.Promise;
 const db = mongoose.connection;
@@ -28,6 +30,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/parse', indexRouter);
 app.use('/feeds', feedControllers);
+app.use('/click', scoreControllers);
+
 
 app.use(function (req, res, next) {
     next(createError(404));
