@@ -18,23 +18,22 @@ const xmlOptions = {
 };
 
 
-module.exports.parseRss= (async(req,res)=>{
-     var urlArr = [ {"url":"https://www.motorcyclistonline.com/arcio/rss/"}, 
-                    {"url":'https://www.motorcyclecruiser.com/arcio/rss/'},
-                   {"url":'https://www.cycleworld.com/arcio/rss/'},
-                ];
-     for(let i=0;i<urlArr.length;i++){
-          await parseUrlSystem(urlArr[i]) 
-     }
-})
+module.exports.parseRss = (async (req, res) => {
+    const urlArr = [{"url": "https://www.motorcyclistonline.com/arcio/rss/"},
+        {"url": 'https://www.motorcyclecruiser.com/arcio/rss/'},
+        {"url": 'https://www.cycleworld.com/arcio/rss/'},
+    ];
+    for (let i = 0; i < urlArr.length; i++) {
+        await parseUrlSystem(urlArr[i])
+    }
+});
 
 
-function parseUrlSystem(url){
-    var url = url.url;
-    parser.parseURL(url, function (err, feed) {
+function parseUrlSystem(urlObj) {
+    parser.parseURL(urlObj.url, function (err, feed) {
         feed.items.forEach(function (entry) {
             const parsedData = xmlParser.parse(entry['content:encoded'], xmlOptions);
-            console.log("call function====>>", parsedData)
+            console.log("call function====>>", parsedData);
             let img = '';
             if (parsedData.img) {
                 if (parsedData.img.length > 1) {
@@ -53,7 +52,7 @@ function parseUrlSystem(url){
                 categories: entry.categories,
                 score: new Date(entry.pubDate).getTime(),
                 creator: {
-                    text: url.split("com/")[0]+"com"
+                    text: url.split("com/")[0] + "com"
                 },
                 created_at: new Date(),
                 updated_at: new Date()
@@ -71,7 +70,7 @@ function parseUrlSystem(url){
                 }
 
                 doc.save(function (err) {
-                    if(err){
+                    if (err) {
                         console.log("Error while saving doc ", err);
                     }
                 });
