@@ -5,19 +5,17 @@ const router = express.Router();
 /* GET users listing. */
 router.post('/', function (req, res, next) {
 
-    Feeds.findOne({_id: req.body.id})
+    const {id} = req.body;
+    Feeds.findOne({_id: id})
         .then(feed => {
             var newScore = feed.score + 10 * 60 * 1000;
-            Feeds.updateOne({_id: req.body.Id}, {score: newScore})
+            Feeds.updateOne({_id: id}, {score: newScore})
                 .then(feed => {
                     res.send({
                         "message": "Successfully Updated",
-                        "total": feed.length,
-                        "data": feed,
                     });
                 })
                 .catch(error => {
-                    console.log("Error : ", error);
                     res.send({
                         "message": "Data Not Found",
                     });
