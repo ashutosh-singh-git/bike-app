@@ -5,7 +5,7 @@ const router = express.Router();
 /* GET users listing. */
 router.post('/', function (req, res, next) {
 
-    Feeds.findOne({_id: req.body.Id})
+    Feeds.findOne({_id: req.body.id})
         .then(feed => {
             var newScore = feed.score + 10 * 60 * 1000;
             Feeds.updateOne({_id: req.body.Id}, {score: newScore})
