@@ -5,15 +5,14 @@ const router = express.Router();
 
 /* GET users listing. */
 router.get('/', function (req, res) {
-     var regex=new RegExp(req.params.title,req.params.link,req.description.title,'i');
-     Feeds.find({    $or: [
-        {title: regex},
-        {link: regex},
-        {description: regex},
-        {text: regex}
-    ]}).then((result)=>{ 
-         res.status(200).json(result)  
-     })
-})
+    const query = req.query.q;
+    console.log(query);
+    Feeds
+        .find({$text: {$search: query}}, {score: {$meta: "textScore"}})
+        .sort({score: {$meta: "textScore"}})
+        .then((result) => {
+            res.status(200).json(result)
+        })
+});
 
 module.exports = router;
