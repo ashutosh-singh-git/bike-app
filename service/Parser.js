@@ -1,5 +1,6 @@
 let Parser = require('rss-parser');
 const xmlParser = require('fast-xml-parser');
+const cron = require("node-cron");
 const Feeds = require('../models/Feeds');
 
 let parser = new Parser({
@@ -17,6 +18,9 @@ const xmlOptions = {
     parseNodeValue: false,
 };
 
+cron.schedule("0 */4 * * *", function() {
+    parseRss();
+});
 
 module.exports.parseRss = (async (req, res) => {
     const urlArr = [{"url": "https://www.motorcyclistonline.com/arcio/rss/", "name": "motorcyclistonline"},
