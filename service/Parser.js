@@ -19,14 +19,18 @@ const xmlOptions = {
 
 
 module.exports.parseRss = (async (req, res) => {
-    const urlArr = [{"url": "https://www.motorcyclistonline.com/arcio/rss/"},
-        {"url": 'https://www.motorcyclecruiser.com/arcio/rss/'},
-        {"url": 'https://www.cycleworld.com/arcio/rss/'},
-        { 'url':"https://www.indianrides.com/motorcycle-tour-blog/feed/"},
-        { 'url':"https://www.visordown.com/articles/rss/"}
+    const urlArr = [{"url": "https://www.motorcyclistonline.com/arcio/rss/", "name": "motorcyclistonline"},
+        {"url": 'https://www.motorcyclecruiser.com/arcio/rss/', "name": "motorcyclecruiser"},
+        {"url": 'https://www.cycleworld.com/arcio/rss/', "name": "cycleworld"},
+        {'url': "https://www.visordown.com/articles/rss/", "name": "visordown"},
+        {'url': "https://www.indianrides.com/motorcycle-tour-blog/feed/", "name": "indianrides"},
     ];
     for (let i = 0; i < urlArr.length; i++) {
-        await parseUrlSystem(urlArr[i])
+        try {
+            await parseUrlSystem(urlArr[i])
+        } catch (e) {
+            console.log("Error occured ", e);
+        }
     }
 });
 
@@ -34,49 +38,56 @@ module.exports.parseRss = (async (req, res) => {
 function parseUrlSystem(urlObj) {
     parser.parseURL(urlObj.url, function (err, feed) {
         feed.items.forEach(function (entry) {
-            const parsedData = xmlParser.parse(entry['content:encoded'], xmlOptions);
-            console.log("call function====>>", parsedData);
-            let img = '';
-            if (parsedData.img) {
-                if (parsedData.img.length > 1) {
-                    img = parsedData.img[0]['@_src'];
-                } else {
-                    img = parsedData.img['@_src'];
-                }
-            }
+            try {
+                const parsedData = xmlParser.parse(entry['content:encoded'], xmlOptions);
 
-            let feeds = new Feeds({
-                title: entry.title,
-                link: entry.link,
-                description: entry.contentSnippet,
-                pubDate: entry.pubDate,
-                img: img,
-                categories: entry.categories,
-                score: new Date(entry.pubDate).getTime(),
-                creator: {
-                    text: url.split("com/")[0] + "com"
-                },
-                created_at: new Date(),
-                updated_at: new Date()
-            });
-
-            Feeds.findOne({title: feeds.title}, function (err, doc) {
-                if (err) {
-                    console.log("Error while querying");
-                }
-
-                if (doc) {
-                    doc.updated_at = new Date();
-                } else {
-                    doc = feeds;
-                }
-
-                doc.save(function (err) {
-                    if (err) {
-                        console.log("Error while saving doc ", err);
+                let img = '';
+                if (parsedData.img) {
+                    if (parsedData.img.length > 1) {
+                        img = parsedData.img[0]['@_src'];
+                    } else {
+                        img = parsedData.img['@_src'];
                     }
+                }
+
+                let feeds = new Feeds({
+                    title: entry.title,
+                    link: entry.link,
+                    description: entry.contentSnippet,
+                    pubDate: entry.pubDate,
+                    img: img,
+                    categories: entry.categories,
+                    score: new Date(entry.pubDate).getTime(),
+                    creator: {
+                        text: urlObj.name
+                    },
+                    created_at: new Date(),
+                    updated_at: new Date()
                 });
-            });
+
+                console.log("Feeds Object ", feeds);
+
+
+                Feeds.findOne({title: feeds.title}, function (err, doc) {
+                    if (err) {
+                        console.log("Error while querying");
+                    }
+
+                    if (doc) {
+                        doc.updated_at = new Date();
+                    } else {
+                        doc = feeds;
+                    }
+
+                    doc.save(function (err) {
+                        if (err) {
+                            console.log("Error while saving doc ", err);
+                        }
+                    });
+                });
+            } catch (e) {
+                console.error("Error in parsing data ", e);
+            }
         })
     })
 }
