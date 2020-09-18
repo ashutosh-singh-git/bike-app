@@ -22,6 +22,8 @@ module.exports.parseRss = (async (req, res) => {
     const urlArr = [{"url": "https://www.motorcyclistonline.com/arcio/rss/"},
         {"url": 'https://www.motorcyclecruiser.com/arcio/rss/'},
         {"url": 'https://www.cycleworld.com/arcio/rss/'},
+        { 'url':"https://www.indianrides.com/motorcycle-tour-blog/feed/"},
+        { 'url':"https://www.visordown.com/articles/rss/"}
     ];
     for (let i = 0; i < urlArr.length; i++) {
         await parseUrlSystem(urlArr[i])
